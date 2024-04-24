@@ -1,25 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import axios from 'axios';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class connectionExample extends React.Component {
+  constructor() {
+    super();
+    this.state={
+      data:[]
+    };
+  }
+
+  fetchData() {
+  fetch('http://127.0.0.1:8000/api')
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      this.setState({
+        data: data,
+      });
+      console.log(data);
+    })
+    .catch((error) => {
+      console.error('Error fetching data:', error);
+    });
 }
 
-export default App;
+
+  componentDidMount(){
+    this.fetchData();
+  }
+  render() {
+    return <div>
+      <header>Data Generated From Django</header>
+      <hr></hr>
+      {this.state.data.map((output, id) => (
+        <div key={id}>
+          <div>
+            <h2>{output.name}</h2>
+            <img src={output.image.url} alt={output.name}/>
+            <h3>{output.description}</h3>
+            <h3>${output.price}</h3>
+          </div>
+        </div>
+      ))}
+    </div>
+  }
+}
+export default connectionExample;
